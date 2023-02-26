@@ -12,7 +12,7 @@
   "bugs": {
     "url": "https://github.com/ArtBIT/css-animator/issues"
   },
-  "homepage": "https://artbit.github.io/",
+  "homepage": "https://artbit.github.io/css-animator",
   "dependencies": {
     "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.10.5",
