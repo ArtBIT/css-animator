@@ -1,5 +1,5 @@
 # CSS-Animator
-[![GitHub license](https://img.shields.io/github/license/ArtBIT/html5-mandala.svg)](https://github.com/ArtBIT/html5-mandala) [![GitHub stars](https://img.shields.io/github/stars/ArtBIT/html5-mandala.svg)](https://github.com/ArtBIT/html5-mandala)  [![awesomeness](https://img.shields.io/badge/awesomeness-maximum-red.svg)](https://github.com/ArtBIT/html5-mandala)
+[![GitHub license](https://img.shields.io/github/license/ArtBIT/css-animator.svg)](https://github.com/ArtBIT/css-animator) [![GitHub stars](https://img.shields.io/github/stars/ArtBIT/css-animator.svg)](https://github.com/ArtBIT/css-animator)  [![awesomeness](https://img.shields.io/badge/awesomeness-maximum-red.svg)](https://github.com/ArtBIT/css-animator)
 
 This is a simple CSS Animation Tool
 
