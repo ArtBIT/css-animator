@@ -1,0 +1,30 @@
+.root {
+    position: relative;
+    width: 100%;
+}
+
+.arnie {
+    position: absolute;
+    width: 100px;
+    bottom: 0;
+    right: 0;
+    animation: 5s ease-in 1s infinite alternate fade-to-black;
+}
+
+.text {
+    font-size: 0.8rem;
+    height: 40px;
+    position: absolute;
+    right: 80px;
+    top: -110px;
+    width: 140px;
+}
+
+@keyframes fade-to-black {
+    0% {
+        filter: brightness(1);
+    }
+    0% {
+        filter: brightness(0);
+    }
+}

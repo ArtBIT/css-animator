@@ -1,0 +1,17 @@
+.form {
+  width: 320px;
+}
+.form .form-row {
+  flex-direction: row;
+  margin-bottom: 20px;
+}
+.flex-grow-and-shrink {
+  flex: 1;
+}
+
+.flex-grow {
+  flex-grow: 1;
+}
+.flex-shrink {
+  flex-shrink: 1;
+}

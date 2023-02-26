@@ -1,0 +1,45 @@
+.slider {
+  width: 100%;
+}
+.frames {
+  display: flex;
+  flex-direction: row;
+  height: 50px;
+}
+
+.frame {
+  border-width: 1px 1px 0 0;
+  border-style: solid;
+  border-color: #8d8d8d;
+  flex: 1;
+  cursor: pointer;
+}
+.frame:hover {
+  background: #ccc;
+}
+
+.frame:nth-child(10n) {
+  background: #aaa;
+}
+
+.frame.keyframe {
+  background: green;
+}
+
+.frame.current {
+  position: relative;
+}
+.frame.current::before {
+  content: "";
+  display: block;
+  position: absolute;
+  top: -12px;
+  border-radius: 100%;
+  width: 10px;
+  height: 10px;
+  background: black;
+}
+
+.frame.selected {
+  background: cyan;
+}

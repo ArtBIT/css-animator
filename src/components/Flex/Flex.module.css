@@ -1,0 +1,22 @@
+.root {
+  display: flex;
+}
+.row {
+  flex-direction: row;
+}
+.column {
+  flex-direction: column;
+}
+.center {
+  align-items: center;
+  justify-content: center;
+}
+.grow {
+  flex-grow: 1;
+}
+.stretch {
+  align-items: stretch;
+}
+.wrap {
+  flex-wrap: wrap;
+}

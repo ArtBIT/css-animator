@@ -1,0 +1,8 @@
+.root {
+  text-align: left;
+}
+
+.textarea {
+  width: 100%;
+  min-height: 200px;
+}

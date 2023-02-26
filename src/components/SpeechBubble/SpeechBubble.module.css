@@ -1,0 +1,46 @@
+.wrapper {
+  position: relative;
+}
+
+.speechbubble {
+  --background-color: #ffd;
+  --outline-color: black;
+  --tail-height: 50%;
+  --tail-width: 30%;
+  --size: 5px;
+  color: var(--outline-color);
+  border: calc(var(--size) / 2) solid var(--outline-color);
+  border-radius: 100%;
+  position: absolute;
+  box-sizing: border-box;
+
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background: var(--background-color);
+  box-shadow: 0 calc(var(--size) / -4) var(--outline-color),
+    0 calc(var(--size) / 6) var(--outline-color);
+  font-family: "Comic Sans", "Comic Neue", sans-serif;
+}
+
+.speechbubble::before {
+  content: "";
+  display: block;
+  position: absolute;
+  width: var(--tail-width);
+  height: var(--tail-height);
+  bottom: calc(var(--tail-height) / -2);
+  border-radius: 50%;
+  left: 50%;
+  box-shadow: calc(var(--size) / 2) 0 var(--outline-color),
+    calc(var(--size) * 2) calc(var(--size) / -2) var(--background-color),
+    calc(var(--size) * 2) calc(var(--size) / -2) 0 calc(var(--size) / 2)
+      var(--outline-color);
+  clip-path: polygon(0% 49%, 150% 48%, 150% 100%, 0% 100%);
+}
+.speechbubble.right::before {
+  transform: scaleX(-1);
+}
