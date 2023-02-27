@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import Button from "@mui/material/Button";
 import Flex from "../Flex";
-import useFormFields from "../../hooks/useFormFields";
+import copyTextToClipboard from "../../utils/copy";
 
 import c from "classnames";
 import s from "./FrameForm.module.css";
@@ -14,38 +14,44 @@ const FrameForm = ({
   onRemove,
   onExport,
 }) => {
-  const { values, setValue } = useFormFields({
-    css: "",
-  });
+  const handleChange = useCallback(
+    (e) => {
+      if (e.target.value) {
+        onChange(e.target.value);
+        return;
+      }
+      onRemove();
+    },
+    [onChange, onRemove]
+  );
 
-  useEffect(() => {
-    setValue("css", frame.css);
-  }, [frame.index]);
-
-  const handleChange = useCallback((e) => {
-    setValue(e.target.name, e.target.value);
-  }, []);
+  const handleCopy = useCallback(() => {
+    copyTextToClipboard(frame.css);
+  }, [frame.css]);
 
   return (
     <div className={c(s["root"], className)}>
-      <div>
-        <strong>
+      <Flex row center>
+        <Button>
           {((frame.index / (totalFrames - 1)) * 100).toFixed(0)} %
-        </strong>
-      </div>
+        </Button>
+        <div style={{ flexGrow: 1 }} />
+        <Button onClick={handleCopy} disabled={!frame.css}>
+          Copy
+        </Button>
+        <Button onClick={onRemove}>Clear</Button>
+      </Flex>
       <div>
         <textarea
           name="css"
-          value={values.css}
+          value={frame.css}
           className={s["textarea"]}
           placeholder="Add KeyframeEffect json here"
           onChange={handleChange}
         ></textarea>
       </div>
       <Flex row>
-        <Button onClick={() => onChange(values.css)}>Update</Button>
-        <Button onClick={onRemove}>Delete</Button>
-        <Button onClick={onExport}>Export</Button>
+        <Button onClick={onExport}>Export CSS Animation</Button>
       </Flex>
     </div>
   );

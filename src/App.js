@@ -19,7 +19,7 @@ function App() {
       index: 0,
       css: JSON.stringify(
         {
-          transform: "rotate(0)",
+          transform: "rotateY(0deg)",
           filter: "blur(0)",
         },
         null,
@@ -27,10 +27,10 @@ function App() {
       ),
     },
     {
-      index: 49,
+      index: 50,
       css: JSON.stringify(
         {
-          transform: "rotate(180deg)",
+          transform: "rotateY(360deg)",
           filter: "blur(5px) drop-shadow(0 0 10px #FF0)",
         },
         null,
@@ -38,10 +38,10 @@ function App() {
       ),
     },
     {
-      index: 99,
+      index: 100,
       css: JSON.stringify(
         {
-          transform: "rotate(360deg)",
+          transform: "rotateY(0)",
           filter: "blur(0)",
         },
         null,
@@ -49,7 +49,7 @@ function App() {
       ),
     },
   ]);
-  const [totalFrames, setTotalFrames] = useState(100);
+  const [totalFrames, setTotalFrames] = useState(101);
   const [selectedKeyframeIndex, setSelectedKeyframeIndex] = useState(0);
   const animation = useAnimation({ totalFrames, keyframes });
   const { setCurrentFrame, setAnimationOptions, animationOptions } = animation;
@@ -69,10 +69,11 @@ function App() {
         index: selectedKeyframeIndex,
         css,
       };
-      setKeyframes([
+      const newKeyframes = [
         ...keyframes.filter(({ index }) => index !== selectedKeyframeIndex),
         keyframe,
-      ]);
+      ];
+      setKeyframes(newKeyframes);
     },
     [selectedKeyframeIndex, keyframes]
   );
@@ -121,6 +122,7 @@ ${rules}
     copyTextToClipboard(`
 .animation-${name} {
     animation-duration: ${animationOptions.duration}ms;
+    animation-timing-function: ${animationOptions.easing};
     animation-iteration-count: ${animationOptions.iterations ?? "infinite"};
     animation-direction: ${animationOptions.direction};
     animation-fill: ${animationOptions.fill};

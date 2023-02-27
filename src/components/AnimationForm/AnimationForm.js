@@ -162,7 +162,7 @@ function AnimationForm({ className, onChange }) {
   const [durationUnit, setDurationUnit] = useState("s");
   const [delay, setDelay] = useState(0);
   const [delayUnit, setDelayUnit] = useState("s");
-  const [timingFunction, setTimingFunction] = useState("linear");
+  const [timingFunction, setTimingFunction] = useState("ease-in-out");
   const handleChange = useCallback((event) => {
     switch (event.target.name) {
       case "duration":
