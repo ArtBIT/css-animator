@@ -8,3 +8,7 @@
 .root.hovered {
   background-color: #5A5;
 }
+
+.target {
+  position: absolute;
+}

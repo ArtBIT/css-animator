@@ -1,5 +1,4 @@
 import { useRef, useEffect, useState } from "react";
-
 export const useDropFile = (onFileDrop) => {
   const ref = useRef();
   const [active, setActive] = useState(false);
@@ -16,18 +15,33 @@ export const useDropFile = (onFileDrop) => {
     fileInput.style.height = "100%";
     fileInput.style.inset = "0";
     fileInput.style.visibility = "hidden";
+    fileInput.style.display = "none";
     fileInput.style.opacity = 0;
     fileInput.accept = "image/png, image/jpeg";
     ref.current.appendChild(fileInput);
 
+    const eventContainsFiles = (event) => {
+      if (event.dataTransfer.types) {
+        for (var i = 0; i < event.dataTransfer.types.length; i++) {
+          if (event.dataTransfer.types[i] == "Files") {
+            return true;
+          }
+        }
+      }
+      return false;
+    };
+
     const onDragOver = (e) => {
       e.preventDefault();
+      if (!eventContainsFiles(e)) return;
+      fileInput.style.display = "block";
       fileInput.style.visibility = "visible";
       setActive(true);
     };
 
     const onDragleave = (e) => {
       e.preventDefault();
+      fileInput.style.display = "none";
       fileInput.style.visibility = "hidden";
       setActive(false);
     };
@@ -36,6 +50,7 @@ export const useDropFile = (onFileDrop) => {
       e.preventDefault();
       const [file = undefined] = e.target.files;
       onFileDrop(file);
+      fileInput.style.display = "none";
       fileInput.style.visibility = "hidden";
       setActive(false);
     };

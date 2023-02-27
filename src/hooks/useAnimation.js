@@ -4,15 +4,18 @@ import React, {
   createRef,
   useCallback,
   useEffect,
+  useLayoutEffect,
+  useMemo,
 } from "react";
 import { DEFAULT_ANIMATION_OPTIONS } from "../constants";
+import Frame from "../lib/Frame";
 
 export const useAnimation = ({
   totalFrames = 100,
   keyframes = [],
   ...initialState
 }) => {
-  const ref = createRef();
+  const ref = useRef();
   const animation = useRef();
   const lastUpdate = useRef();
   const requestRef = React.useRef();
@@ -53,32 +56,44 @@ export const useAnimation = ({
     requestRef.current = requestAnimationFrame(update);
   }, [currentFrame, totalFrames, duration]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!isPlaying) return;
     requestRef.current = requestAnimationFrame(update);
     return () => cancelAnimationFrame(requestRef.current);
   }, [isPlaying, update]);
 
+  const setAnimationToCurrentFrame = useCallback(
+    (anim) => {
+      const offset = currentFrame / (totalFrames - 1);
+      const { duration, direction } = anim.effect.getComputedTiming();
+      //const iterations = direction.startsWith("alternate") ? 2 : 1;
+      anim.effect.updateTiming({
+        delay: -1 * offset * duration,
+        //iterations,
+      });
+    },
+    [currentFrame, totalFrames]
+  );
+
   // Reset animation
   useEffect(() => {
     if (ref.current) {
       try {
+        console.log("Reset");
         animation.current = new Animation(
           new KeyframeEffect(
             ref.current,
-            keyframes
-              .sort((a, b) => a.index > b.index)
-              .map(({ index, css }) => ({
-                ...JSON.parse(css),
-                offset: index / (totalFrames - 1),
-              })),
+            keyframes.map(({ index, data: { data } }) => ({
+              ...data,
+              offset: index / (totalFrames - 1),
+            })),
             animationOptions
           )
         );
         animation.current.pause();
-        window.anim = animation;
+        setAnimationToCurrentFrame(animation.current);
       } catch (e) {
-        console.log(e);
+        console.error(e);
       }
     }
     return () => {
@@ -87,27 +102,34 @@ export const useAnimation = ({
         animation.current = null;
       }
     };
-  }, [ref, animation, keyframes, animationOptions, totalFrames]);
+  }, [
+    ref,
+    animation,
+    keyframes,
+    setAnimationToCurrentFrame,
+    animationOptions,
+    totalFrames,
+  ]);
+
+  const currentKeyframe = useMemo(() => {
+    return (
+      keyframes.find(({ index }) => index === currentFrame) ||
+      new Frame(currentFrame, {})
+    );
+  }, [currentFrame, keyframes]);
 
   // Update animation
   useEffect(() => {
     if (!animation.current) return;
-
-    const offset = currentFrame / (totalFrames - 1);
-    const { duration, direction } =
-      animation.current.effect.getComputedTiming();
-    //const iterations = direction.startsWith("alternate") ? 2 : 1;
-    animation.current.effect.updateTiming({
-      delay: -1 * offset * duration,
-      //iterations,
-    });
-  }, [animation, currentFrame, totalFrames]);
+    setAnimationToCurrentFrame(animation.current);
+  }, [animation, setAnimationToCurrentFrame, currentKeyframe.data.id]);
 
   return {
     animationOptions,
     ref,
 
     currentFrame,
+    currentKeyframe,
     setCurrentFrame,
     setAnimationOptions,
     pause,

@@ -10,79 +10,58 @@ import AnimationTimeline from "./components/AnimationTimeline";
 import useAnimation from "./hooks/useAnimation";
 import copyTextToClipboard from "./utils/copy";
 import kebabize from "./utils/kebabize";
+import Frame, { FrameData } from "./lib/Frame";
 
 import s from "./App.module.css";
 
 function App() {
   const [keyframes, setKeyframes] = useState([
-    {
-      index: 0,
-      css: JSON.stringify(
-        {
-          transform: "rotateY(0deg)",
-          filter: "blur(0)",
-        },
-        null,
-        2
-      ),
-    },
-    {
-      index: 50,
-      css: JSON.stringify(
-        {
-          transform: "rotateY(360deg)",
-          filter: "blur(5px) drop-shadow(0 0 10px #FF0)",
-        },
-        null,
-        2
-      ),
-    },
-    {
-      index: 100,
-      css: JSON.stringify(
-        {
-          transform: "rotateY(0)",
-          filter: "blur(0)",
-        },
-        null,
-        2
-      ),
-    },
+    new Frame(0, {
+      transform: "rotateY(0deg)",
+      filter: "blur(0)",
+    }),
+    new Frame(50, {
+      transform: "rotateY(360deg)",
+      filter: "blur(5px) drop-shadow(0 0 10px #FF0)",
+    }),
+    new Frame(100, {
+      transform: "rotateY(0)",
+      filter: "blur(0)",
+    }),
   ]);
   const [totalFrames, setTotalFrames] = useState(101);
-  const [selectedKeyframeIndex, setSelectedKeyframeIndex] = useState(0);
   const animation = useAnimation({ totalFrames, keyframes });
+  const { currentFrame, currentKeyframe } = animation;
   const { setCurrentFrame, setAnimationOptions, animationOptions } = animation;
 
-  const selectedKeyframe = useMemo(() => {
-    return (
-      keyframes.find(({ index }) => index === selectedKeyframeIndex) || {
-        index: selectedKeyframeIndex,
-        css: "",
-      }
-    );
-  }, [selectedKeyframeIndex, keyframes]);
+  const updateFrame = useCallback(
+    (frameIndex, data, replace = false) => {
+      const fd = new FrameData(data);
+      const keyframe = new Frame(
+        frameIndex,
+        replace ? fd.data : { ...currentKeyframe.data.data, ...fd.data }
+      );
+      const newKeyframes = [
+        ...keyframes.filter(({ index }) => index !== frameIndex),
+        keyframe,
+      ].sort((a, b) => a.index > b.index);
+
+      setKeyframes(newKeyframes);
+    },
+    [keyframes, currentKeyframe.data.id]
+  );
 
   const handleKeyframeChange = useCallback(
     (css) => {
-      const keyframe = {
-        index: selectedKeyframeIndex,
-        css,
-      };
-      const newKeyframes = [
-        ...keyframes.filter(({ index }) => index !== selectedKeyframeIndex),
-        keyframe,
-      ];
-      setKeyframes(newKeyframes);
+      updateFrame(currentFrame, css, true);
     },
-    [selectedKeyframeIndex, keyframes]
+    [currentFrame, keyframes]
   );
 
   const handleKeyframeRemoval = useCallback(() => {
-    setKeyframes([
-      ...keyframes.filter(({ index }) => index !== selectedKeyframeIndex),
-    ]);
-  }, [selectedKeyframeIndex, keyframes]);
+    setKeyframes([...keyframes.filter(({ index }) => index !== currentFrame)]);
+    setCurrentFrame(0);
+  }, [currentFrame, keyframes]);
 
   const handleOptionsChange = useCallback(
     (options) => {
@@ -93,29 +72,23 @@ function App() {
 
   const handleScrub = useCallback(
     (e) => {
-      const value = parseInt(e.target.value);
-      setCurrentFrame(value);
-      setSelectedKeyframeIndex(value);
+      setCurrentFrame(parseInt(e.target.value));
     },
     [setCurrentFrame]
+  );
+
+  const handleFrameDataUpdate = useCallback(
+    (data) => updateFrame(currentFrame, data),
+    [currentFrame]
   );
 
   const handleAnimationExport = useCallback(() => {
     const name = window.prompt("Enter animation name:");
     const cssKeyframes = keyframes
       .sort((a, b) => a.index > b.index)
-      .map(({ index, css: jsonString }) => {
-        const json = JSON.parse(jsonString);
+      .map(({ index, data }) => {
         const percent = ((index / (totalFrames - 1)) * 100).toFixed(0) + "%";
-        const rules = Object.keys(json)
-          .map((ruleName) => {
-            const rule = json[ruleName];
-            return `    ${kebabize(ruleName)}: ${rule};`;
-          })
-          .join("\n");
-        return `  ${percent} {
-${rules}
-  }`;
+        return data.toCss(percent);
       })
       .join("\n");
 
@@ -147,9 +120,14 @@ ${cssKeyframes}
             className={s["animation-form"]}
             onChange={handleOptionsChange}
           />
-          <Stage className={s["stage"]} innerRef={animation.ref} />
+          <Stage
+            className={s["stage"]}
+            innerRef={animation.ref}
+            frame={currentKeyframe}
+            updateFrame={handleFrameDataUpdate}
+          />
           <FrameForm
-            frame={selectedKeyframe}
+            frame={currentKeyframe}
             totalFrames={totalFrames}
             className={s["frame-form"]}
             onChange={handleKeyframeChange}
@@ -158,9 +136,8 @@ ${cssKeyframes}
           />
         </Flex>
         <AnimationTimeline
-          currentIndex={selectedKeyframeIndex}
           keyframes={keyframes}
-          onMouseDown={setSelectedKeyframeIndex}
+          onMouseDown={setCurrentFrame}
           currentFrame={animation.currentFrame}
           start={animation.start}
           stop={animation.stop}

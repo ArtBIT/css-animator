@@ -5,13 +5,12 @@ import s from "./KeyframeTimeline.module.css";
 const KeyframeTimeline = ({
   totalFrames = 100,
   currentFrame = 0,
-  currentIndex = 0,
   keyframes = [],
   onClick,
   onMouseDown,
   onScrub,
 }) => {
-  const kfs = new Set(keyframes.map((frame) => frame.index));
+  const kfs = new Set(keyframes.map(({ index }) => index));
   const handleClick = (index) =>
     onClick
       ? (_) => {
@@ -45,7 +44,7 @@ const KeyframeTimeline = ({
             className={classnames(
               s["frame"],
               kfs.has(index) && s["keyframe"],
-              currentIndex === index && s["selected"]
+              currentFrame === index && s["selected"]
             )}
           ></div>
         ))}
