@@ -1,45 +1,43 @@
 .slider {
-  width: 100%;
+    width: 100%;
 }
 .frames {
-  display: flex;
-  flex-direction: row;
-  height: 50px;
+    display: flex;
+    flex-direction: row;
+    height: 50px;
 }
 
 .frame {
-  border-width: 1px 1px 0 0;
-  border-style: solid;
-  border-color: #8d8d8d;
-  flex: 1;
-  cursor: pointer;
+    border-width: 1px 1px 0 0;
+    border-style: solid;
+    border-color: #8d8d8d;
+    flex: 1;
+    cursor: pointer;
 }
 .frame:hover {
-  background: #ccc;
+    background: #ccc;
 }
 
 .frame:nth-child(10n + 1) {
-  background: #aaa;
+    background: #aaa;
 }
 
 .frame.keyframe {
-  background: green;
+    background: green;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
-.frame.current {
-  position: relative;
-}
-.frame.current::before {
-  content: "";
-  display: block;
-  position: absolute;
-  top: -12px;
-  border-radius: 100%;
-  width: 10px;
-  height: 10px;
-  background: black;
+.frame.keyframe::before {
+    content: "";
+    display: block;
+    border-radius: 100%;
+    width: 8px;
+    height: 8px;
+    background: black;
 }
 
 .frame.selected {
-  background: cyan;
+    background: cyan;
 }
