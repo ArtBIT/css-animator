@@ -18,13 +18,13 @@ export class FrameData {
     const rules = Object.keys(this.data)
       .map((ruleName) => {
         const rule = this.data[ruleName];
-        return `${indent}${kebabize(ruleName)}: ${rule};`;
+        return `${indent}${indent}${kebabize(ruleName)}: ${rule};`;
       })
       .join("\n");
 
-    return `${selector} {
+    return `${indent}${selector} {
 ${rules}
-}`;
+${indent}}`;
   }
   fromString(str) {
     this.data = JSON.parse(str);

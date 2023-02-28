@@ -82,24 +82,27 @@ function App() {
     [currentFrame]
   );
 
+  const indent = "  ";
   const handleAnimationExport = useCallback(() => {
     const name = window.prompt("Enter animation name:");
     const cssKeyframes = keyframes
       .sort((a, b) => a.index > b.index)
       .map(({ index, data }) => {
         const percent = ((index / (totalFrames - 1)) * 100).toFixed(0) + "%";
-        return data.toCss(percent);
+        return data.toCSS(percent, indent);
       })
       .join("\n");
 
     copyTextToClipboard(`
 .animation-${name} {
-    animation-duration: ${animationOptions.duration}ms;
-    animation-timing-function: ${animationOptions.easing};
-    animation-iteration-count: ${animationOptions.iterations ?? "infinite"};
-    animation-direction: ${animationOptions.direction};
-    animation-fill: ${animationOptions.fill};
-    animation-name: ${name};
+${indent}animation-duration: ${animationOptions.duration}ms;
+${indent}animation-timing-function: ${animationOptions.easing};
+${indent}animation-iteration-count: ${
+      animationOptions.iterations ?? "infinite"
+    };
+${indent}animation-direction: ${animationOptions.direction};
+${indent}animation-fill: ${animationOptions.fill};
+${indent}animation-name: ${name};
 }
 
 @keyframes ${name} {
