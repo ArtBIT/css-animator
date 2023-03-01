@@ -137,7 +137,7 @@ ${indent}animation-name: ${name};
 ${cssKeyframes}
 }
 `;
-  }, [keyframes, cssVersion]);
+  }, [keyframes, cssVersion, animationOptions]);
 
   const handleAnimationExport = useCallback(() => {
     copyTextToClipboard(animationCSS);
