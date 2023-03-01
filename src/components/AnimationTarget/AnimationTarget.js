@@ -15,6 +15,7 @@ const AnimationTarget = React.forwardRef(
 
     const [isMovable, setIsMovable] = useState(false);
     const handleMouseDown = useCallback((e) => {
+      if (e.button != 0) return;
       e.preventDefault();
       e.stopPropagation();
       setIsMovable(true);
