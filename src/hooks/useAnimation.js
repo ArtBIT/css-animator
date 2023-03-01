@@ -128,6 +128,7 @@ export const useAnimation = ({
     animationOptions,
     ref,
 
+    isPlaying,
     currentFrame,
     currentKeyframe,
     setCurrentFrame,

@@ -25,4 +25,15 @@ export const decomposeMatrix = (matrix) => {
     skewY: skewY,
     rotation: skewX, // rotation is the same as skew x
   };
+
+  /*
+  const matrix = new DOMMatrix([
+    Math.cos(angle) * scaleX,
+    Math.sin(angle) * scaleX,
+    -Math.sin(angle) * scaleY,
+    Math.cos(angle) * scaleY,
+    translateX,
+    translateY,
+  ]);
+  */
 };

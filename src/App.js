@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useRef, useCallback } from "react";
+import useEvent from "beautiful-react-hooks/useEvent";
 
 import Logo from "./components/Logo";
 import Stage from "./components/Stage";
@@ -34,6 +35,25 @@ function App() {
   const { currentFrame, currentKeyframe } = animation;
   const { setCurrentFrame, setAnimationOptions, animationOptions } = animation;
 
+  const shiftCurrentKeyFrame = useCallback(
+    (numFrames) => {
+      const newKeyframe = currentKeyframe.clone();
+      newKeyframe.index += numFrames;
+
+      const newKeyframes = [
+        ...keyframes.filter(
+          ({ index }) =>
+            index !== currentKeyframe.index && index !== newKeyframe.index
+        ),
+        newKeyframe,
+      ].sort((a, b) => a.index > b.index);
+
+      setKeyframes(newKeyframes);
+      setCurrentFrame(newKeyframe.index);
+    },
+    [currentKeyframe, keyframes]
+  );
+
   const updateFrame = useCallback(
     (frameIndex, data, replace = false) => {
       const fd = new FrameData(data);
@@ -60,7 +80,6 @@ function App() {
 
   const handleKeyframeRemoval = useCallback(() => {
     setKeyframes([...keyframes.filter(({ index }) => index !== currentFrame)]);
-    setCurrentFrame(0);
   }, [currentFrame, keyframes]);
 
   const handleOptionsChange = useCallback(
@@ -110,6 +129,47 @@ ${cssKeyframes}
 }
 `);
   }, [keyframes, animationOptions, totalFrames]);
+
+  const onKeyDown = useEvent({ current: window.document }, "keydown");
+  const handleKeyboardShortcuts = useCallback(
+    (e) => {
+      let preventDefault = true;
+      switch (e.key) {
+        case "ArrowLeft":
+          if (e.shiftKey) {
+            shiftCurrentKeyFrame(-1);
+            break;
+          }
+          setCurrentFrame((totalFrames + currentFrame - 1) % totalFrames);
+          break;
+        case "ArrowRight":
+          if (e.shiftKey) {
+            shiftCurrentKeyFrame(+1);
+            break;
+          }
+          setCurrentFrame((totalFrames + currentFrame + 1) % totalFrames);
+          break;
+        case "Delete":
+          handleKeyframeRemoval();
+          break;
+        case " ":
+          animation.isPlaying ? animation.pause() : animation.start();
+          break;
+        default:
+          preventDefault = false;
+      }
+      preventDefault && e.preventDefault();
+      console.log(e);
+    },
+    [
+      currentFrame,
+      totalFrames,
+      animation,
+      shiftCurrentKeyFrame,
+      handleKeyframeRemoval,
+    ]
+  );
+  onKeyDown(handleKeyboardShortcuts);
 
   return (
     <div className={s["root"]}>

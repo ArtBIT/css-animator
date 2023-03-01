@@ -1,14 +1,17 @@
 .root {
   position: relative;
-  min-height: 300px;
-  background-color: #AAA;
+  min-height: 100%;
   height: 100%;
+  top: 50%;
+  left: 50%;
 }
 
 .root.hovered {
-  background-color: #5A5;
+  background-color: #5a5;
 }
 
 .target {
   position: absolute;
+  top: calc(var(--target-size) / -2);
+  left: calc(var(--target-size) / -2);
 }

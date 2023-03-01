@@ -6,12 +6,7 @@
     "type": "git",
     "url": "git+https://github.com/ArtBIT/css-animator.git"
   },
-  "keywords": [
-    "html5",
-    "css",
-    "animation",
-    "javascript"
-  ],
+  "keywords": ["html5", "css", "animation", "javascript"],
   "author": "Djordje Ungar",
   "license": "MIT",
   "bugs": {
@@ -31,6 +26,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-moveable": "^0.46.1",
+    "react-router-dom": "^6.8.2",
     "react-scripts": "5.0.1",
     "web-vitals": "^2.1.4"
   },
@@ -46,17 +42,10 @@
     "deploy": "npm run build && gh-pages -d build"
   },
   "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
+    "extends": ["react-app", "react-app/jest"]
   },
   "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
+    "production": [">0.2%", "not dead", "not op_mini all"],
     "development": [
       "last 1 chrome version",
       "last 1 firefox version",

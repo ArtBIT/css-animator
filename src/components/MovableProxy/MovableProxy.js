@@ -51,7 +51,7 @@ const MovableProxy = ({
   );
   return (
     <>
-      <div ref={ref} />
+      <div ref={ref} className={className} />
       {enabled && (
         <Moveable
           target={ref}

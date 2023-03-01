@@ -36,6 +36,9 @@ export class Frame {
     this.index = index;
     this.data = new FrameData(data);
   }
+  clone() {
+    return new Frame(this.index, this.data.data);
+  }
 }
 
 export default Frame;

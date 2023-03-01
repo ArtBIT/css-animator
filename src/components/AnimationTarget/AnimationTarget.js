@@ -33,14 +33,21 @@ const AnimationTarget = React.forwardRef(
         onMouseDown={handleMouseDown}
         ref={dropRef}
       >
-        {value && <div ref={ref} dangerouslySetInnerHTML={{ __html: value }} />}
+        {value && (
+          <div
+            ref={ref}
+            dangerouslySetInnerHTML={{ __html: value }}
+            className={s["target"]}
+          />
+        )}
         {!value && (
           <div ref={ref} className={s["target"]}>
-            <img src={Dummy} alt="Drop image files here..." width="300px" />
+            <img src={Dummy} alt="Drop image files here..." width="500px" />
             <div>Drop image or SVG files here...</div>
           </div>
         )}
         <MovableProxy
+          className={s["target"]}
           proxyRef={ref}
           enabled={isMovable}
           onChange={updateFrame}
