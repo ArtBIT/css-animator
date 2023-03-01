@@ -76,10 +76,11 @@ export const useAnimation = ({
   );
 
   // Reset animation
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (ref.current) {
       try {
-        console.log("Reset");
+        console.log("Update animation");
+        animation.current && animation.current.cancel();
         animation.current = new Animation(
           new KeyframeEffect(
             ref.current,
@@ -92,6 +93,7 @@ export const useAnimation = ({
         );
         animation.current.pause();
         setAnimationToCurrentFrame(animation.current);
+        window.anim = animation.current;
       } catch (e) {
         console.error(e);
       }
@@ -119,7 +121,7 @@ export const useAnimation = ({
   }, [currentFrame, keyframes]);
 
   // Update animation
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!animation.current) return;
     setAnimationToCurrentFrame(animation.current);
   }, [animation, setAnimationToCurrentFrame, currentKeyframe.data.id]);
