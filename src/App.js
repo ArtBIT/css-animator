@@ -257,6 +257,7 @@ ${cssKeyframes}
         </Flex>
         <AnimationTimeline
           keyframes={keyframes}
+          isPlaying={animation.isPlaying}
           onMouseDown={setCurrentFrame}
           currentFrame={animation.currentFrame}
           prev={prevFrame}

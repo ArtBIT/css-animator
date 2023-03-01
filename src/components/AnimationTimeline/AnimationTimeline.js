@@ -9,7 +9,9 @@ const AnimationTimeline = ({ start, stop, pause, prev, next, ...props }) => {
   return (
     <Container>
       <div className={s["root"]}>
-        <AnimationControls {...{ start, stop, pause, prev, next }} />
+        <AnimationControls
+          {...{ start, stop, pause, prev, next, isPlaying: props.isPlaying }}
+        />
         <KeyframeTimeline {...props} />
       </div>
     </Container>

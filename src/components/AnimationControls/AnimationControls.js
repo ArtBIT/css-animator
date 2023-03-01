@@ -10,19 +10,31 @@ import NextFrameIcon from "@mui/icons-material/FastForward";
 import IconButton from "@mui/material/IconButton";
 import s from "./AnimationControls";
 
-const AnimationControls = ({ start, stop, pause, prev, next, ...props }) => {
+const AnimationControls = ({
+  start,
+  stop,
+  pause,
+  prev,
+  next,
+  isPlaying,
+  ...props
+}) => {
   return (
     <Container>
       <div className={s["root"]}>
         <IconButton onClick={prev}>
           <PrevFrameIcon />
         </IconButton>
-        <IconButton onClick={start}>
-          <PlayArrowIcon />
-        </IconButton>
-        <IconButton onClick={pause}>
-          <PauseIcon />
-        </IconButton>
+        {!isPlaying && (
+          <IconButton onClick={start}>
+            <PlayArrowIcon />
+          </IconButton>
+        )}
+        {isPlaying && (
+          <IconButton onClick={pause}>
+            <PauseIcon />
+          </IconButton>
+        )}
         <IconButton onClick={stop}>
           <StopIcon />
         </IconButton>
