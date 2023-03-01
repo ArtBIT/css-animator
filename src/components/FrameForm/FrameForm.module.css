@@ -3,7 +3,7 @@
 }
 
 .textarea {
-  width: 100%;
+  width: calc(100% - 10px);
   min-height: 200px;
 }
 

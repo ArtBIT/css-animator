@@ -7,8 +7,13 @@ import React, {
   useMemo,
 } from "react";
 import Button from "@mui/material/Button";
+import ContentCopyIcon from "@mui/icons-material/ContentCopy";
+import ContentPasteIcon from "@mui/icons-material/ContentPaste";
+import ContentCutIcon from "@mui/icons-material/ContentCut";
+import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
+import IconButton from "@mui/material/IconButton";
+
 import Flex from "../Flex";
-import copyTextToClipboard from "../../utils/copy";
 
 import c from "classnames";
 import s from "./FrameForm.module.css";
@@ -17,6 +22,9 @@ const FrameForm = ({
   className,
   frame,
   totalFrames,
+  onCopy,
+  onCut,
+  onPaste,
   onChange,
   onRemove,
   onExport,
@@ -53,10 +61,6 @@ const FrameForm = ({
     ref.current.setSelectionRange(cursor, cursor);
   }, [ref, cursor, value]);
 
-  const handleCopy = useCallback(() => {
-    copyTextToClipboard(frame.data.toString());
-  }, [frame.data.id]);
-
   return (
     <div className={c(s["root"], className)}>
       <Flex row center>
@@ -64,10 +68,35 @@ const FrameForm = ({
           {((frame.index / (totalFrames - 1)) * 100).toFixed(0)} %
         </Button>
         <div style={{ flexGrow: 1 }} />
-        <Button onClick={handleCopy} disabled={!frame.data}>
-          Copy
-        </Button>
-        <Button onClick={onRemove}>Clear</Button>
+
+        <IconButton
+          onClick={onCopy}
+          disabled={!frame.data}
+          aria-label="Copy Frame"
+        >
+          <ContentCopyIcon />
+        </IconButton>
+        <IconButton
+          onClick={onCut}
+          disabled={!frame.data}
+          aria-label="Cut Frame"
+        >
+          <ContentCutIcon />
+        </IconButton>
+        <IconButton
+          onClick={onPaste}
+          disabled={!frame.data}
+          aria-label="Paste Frame CSS"
+        >
+          <ContentPasteIcon />
+        </IconButton>
+        <IconButton
+          onClick={onRemove}
+          disabled={!frame.data}
+          aria-label="Clear Frame CSS"
+        >
+          <DeleteForeverIcon />
+        </IconButton>
       </Flex>
       <div>
         <textarea
@@ -79,9 +108,6 @@ const FrameForm = ({
           onChange={handleChange}
         />
       </div>
-      <Flex row>
-        <Button onClick={onExport}>Export CSS Animation</Button>
-      </Flex>
     </div>
   );
 };

@@ -1,10 +1,12 @@
 import React, { useState, useMemo, useRef, useCallback } from "react";
 import useEvent from "beautiful-react-hooks/useEvent";
+import { SnackbarProvider, useSnackbar } from "notistack";
 
 import Logo from "./components/Logo";
 import Stage from "./components/Stage";
 import Flex from "./components/Flex";
 import FrameForm from "./components/FrameForm";
+import AnimationCSS from "./components/AnimationCSS";
 import AnimationForm from "./components/AnimationForm";
 import AnimationTimeline from "./components/AnimationTimeline";
 
@@ -32,8 +34,11 @@ function App() {
   ]);
   const [totalFrames, setTotalFrames] = useState(101);
   const animation = useAnimation({ totalFrames, keyframes });
+  const [clipboard, setClipboard] = useState();
   const { currentFrame, currentKeyframe } = animation;
   const { setCurrentFrame, setAnimationOptions, animationOptions } = animation;
+  const { enqueueSnackbar } = useSnackbar();
+  const showSnackBar = (text, variant) => enqueueSnackbar(text, { variant });
 
   const shiftCurrentKeyFrame = useCallback(
     (numFrames) => {
@@ -101,9 +106,9 @@ function App() {
     [currentFrame]
   );
 
-  const indent = "  ";
-  const handleAnimationExport = useCallback(() => {
-    const name = window.prompt("Enter animation name:");
+  const animationCSS = useMemo(() => {
+    const indent = "  ";
+    const name = "custom";
     const cssKeyframes = keyframes
       .sort((a, b) => a.index > b.index)
       .map(({ index, data }) => {
@@ -112,7 +117,7 @@ function App() {
       })
       .join("\n");
 
-    copyTextToClipboard(`
+    return `
 .animation-${name} {
 ${indent}animation-duration: ${animationOptions.duration}ms;
 ${indent}animation-timing-function: ${animationOptions.easing};
@@ -127,8 +132,35 @@ ${indent}animation-name: ${name};
 @keyframes ${name} {
 ${cssKeyframes}
 }
-`);
-  }, [keyframes, animationOptions, totalFrames]);
+`;
+  }, [keyframes]);
+
+  const handleAnimationExport = useCallback(() => {
+    copyTextToClipboard(animationCSS);
+    showSnackBar("CSS snippet copied to clipboard");
+  }, [animationCSS, showSnackBar]);
+
+  const prevFrame = useCallback(
+    () => setCurrentFrame((totalFrames + currentFrame - 1) % totalFrames),
+    [currentFrame, totalFrames]
+  );
+  const nextFrame = useCallback(
+    () => setCurrentFrame((totalFrames + currentFrame + 1) % totalFrames),
+    [currentFrame, totalFrames]
+  );
+
+  const handleCopyFrame = useCallback(() => {
+    setClipboard({ type: "frame", data: currentKeyframe });
+  }, [currentKeyframe]);
+
+  const handleCutFrame = useCallback(() => {
+    setClipboard({ type: "frame", data: currentKeyframe });
+    handleKeyframeRemoval();
+  }, [currentKeyframe, handleKeyframeRemoval]);
+
+  const handlePasteFrame = useCallback(() => {
+    handleFrameDataUpdate(clipboard.data.data.data);
+  }, [handleFrameDataUpdate, clipboard]);
 
   const onKeyDown = useEvent({ current: window.document }, "keydown");
   const handleKeyboardShortcuts = useCallback(
@@ -140,20 +172,32 @@ ${cssKeyframes}
             shiftCurrentKeyFrame(-1);
             break;
           }
-          setCurrentFrame((totalFrames + currentFrame - 1) % totalFrames);
+          prevFrame();
           break;
         case "ArrowRight":
           if (e.shiftKey) {
             shiftCurrentKeyFrame(+1);
             break;
           }
-          setCurrentFrame((totalFrames + currentFrame + 1) % totalFrames);
+          nextFrame();
           break;
         case "Delete":
           handleKeyframeRemoval();
           break;
         case " ":
           animation.isPlaying ? animation.pause() : animation.start();
+          break;
+        case "c":
+          if (!e.ctrlKey) break;
+          handleCopyFrame();
+          break;
+        case "x":
+          if (!e.ctrlKey) break;
+          handleCutFrame();
+          break;
+        case "v":
+          if (!e.ctrlKey) break;
+          handlePasteFrame();
           break;
         default:
           preventDefault = false;
@@ -162,11 +206,14 @@ ${cssKeyframes}
       console.log(e);
     },
     [
-      currentFrame,
-      totalFrames,
+      prevFrame,
+      nextFrame,
       animation,
       shiftCurrentKeyFrame,
       handleKeyframeRemoval,
+      handleCopyFrame,
+      handleCutFrame,
+      handlePasteFrame,
     ]
   );
   onKeyDown(handleKeyboardShortcuts);
@@ -188,23 +235,31 @@ ${cssKeyframes}
             innerRef={animation.ref}
             frame={currentKeyframe}
             updateFrame={handleFrameDataUpdate}
+            isPlaying={animation.isPlaying}
           />
-          <FrameForm
-            frame={currentKeyframe}
-            totalFrames={totalFrames}
-            className={s["frame-form"]}
-            onChange={handleKeyframeChange}
-            onRemove={handleKeyframeRemoval}
-            onExport={handleAnimationExport}
-          />
+          <Flex column className={s["frame-form"]}>
+            <FrameForm
+              frame={currentKeyframe}
+              totalFrames={totalFrames}
+              onCopy={handleCopyFrame}
+              onCut={handleCutFrame}
+              onPaste={handlePasteFrame}
+              onChange={handleKeyframeChange}
+              onRemove={handleKeyframeRemoval}
+              onExport={handleAnimationExport}
+            />
+            <AnimationCSS text={animationCSS} onCopy={handleAnimationExport} />
+          </Flex>
         </Flex>
         <AnimationTimeline
           keyframes={keyframes}
           onMouseDown={setCurrentFrame}
           currentFrame={animation.currentFrame}
+          prev={prevFrame}
           start={animation.start}
           stop={animation.stop}
           pause={animation.pause}
+          next={nextFrame}
           totalFrames={totalFrames}
           onScrub={handleScrub}
         />

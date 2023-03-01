@@ -8,7 +8,7 @@ import MovableProxy from "../MovableProxy";
 import s from "./AnimationTarget.module.css";
 
 const AnimationTarget = React.forwardRef(
-  ({ className, frame, updateFrame, ...props }, ref) => {
+  ({ className, frame, updateFrame, isPlaying, ...props }, ref) => {
     const [value, setValue] = useState(null);
     const onChange = (file) => fileToHtml(file).then((html) => setValue(html));
     const { ref: dropRef, active } = useDropFile(onChange);
@@ -49,7 +49,7 @@ const AnimationTarget = React.forwardRef(
         <MovableProxy
           className={s["target"]}
           proxyRef={ref}
-          enabled={isMovable}
+          enabled={isMovable && !isPlaying}
           onChange={updateFrame}
           frame={frame}
         />

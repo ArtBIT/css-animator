@@ -1,6 +1,13 @@
 .root {
   text-align: center;
 }
+.main {
+  --gap: 0px;
+  flex-grow: 0;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+  gap: var(--gap);
+}
 
 .header {
   background-color: black;
@@ -31,14 +38,31 @@
 
 @media screen and (max-width: 1400px) {
   .main {
-    flex-wrap: wrap;
+    --gap: 20px;
   }
   .frame-form {
     order: 1;
+  }
+  .animation-form,
+  .frame-form {
+    flex-basis: calc(50% - var(--gap));
+    margin: 0;
+    flex-shrink: 1;
+    flex-grow: 0;
   }
   .stage {
     order: 2;
     flex-basis: 100%;
     min-height: 70vh;
+  }
+}
+@media screen and (max-width: 600px) {
+  .main {
+    --gap: 0px;
+  }
+  .animation-form,
+  .frame-form,
+  .stage {
+    flex-basis: 100%;
   }
 }
