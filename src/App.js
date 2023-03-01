@@ -32,6 +32,7 @@ function App() {
       filter: "blur(0)",
     }),
   ]);
+  const [cssVersion, setCSSVersion] = useState(1);
   const [totalFrames, setTotalFrames] = useState(101);
   const animation = useAnimation({ totalFrames, keyframes });
   const [clipboard, setClipboard] = useState();
@@ -55,8 +56,9 @@ function App() {
 
       setKeyframes(newKeyframes);
       setCurrentFrame(newKeyframe.index);
+      setCSSVersion(cssVersion + 1);
     },
-    [currentKeyframe, keyframes]
+    [currentKeyframe, keyframes, cssVersion]
   );
 
   const updateFrame = useCallback(
@@ -72,8 +74,9 @@ function App() {
       ].sort((a, b) => a.index > b.index);
 
       setKeyframes(newKeyframes);
+      setCSSVersion(cssVersion + 1);
     },
-    [keyframes, currentKeyframe.data.id]
+    [keyframes, currentKeyframe.data.id, cssVersion]
   );
 
   const handleKeyframeChange = useCallback(
@@ -85,7 +88,8 @@ function App() {
 
   const handleKeyframeRemoval = useCallback(() => {
     setKeyframes([...keyframes.filter(({ index }) => index !== currentFrame)]);
-  }, [currentFrame, keyframes]);
+    setCSSVersion(cssVersion + 1);
+  }, [currentFrame, keyframes, cssVersion]);
 
   const handleOptionsChange = useCallback(
     (options) => {
@@ -133,7 +137,7 @@ ${indent}animation-name: ${name};
 ${cssKeyframes}
 }
 `;
-  }, [keyframes]);
+  }, [keyframes, cssVersion]);
 
   const handleAnimationExport = useCallback(() => {
     copyTextToClipboard(animationCSS);
