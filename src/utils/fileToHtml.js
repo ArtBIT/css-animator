@@ -12,7 +12,7 @@ const fileToHtml = (file) => {
             const doc = svg.documentElement;
             doc.setAttribute("width", "100px");
             doc.setAttribute("height", "100px");
-            resolve(SVG.stringify(svg));
+            resolve({ html: SVG.stringify(svg), width: 500, height: 500 });
           };
           reader.readAsText(file);
           break;
@@ -22,7 +22,16 @@ const fileToHtml = (file) => {
         case "jpg":
         case "jpeg":
           reader.onload = function (e) {
-            resolve(`<img src="${reader.result}" width="300px"/>`);
+            const image = new Image();
+            image.src = reader.result;
+            image.onload = () => {
+              const ratio = image.width / image.height;
+              resolve({
+                html: `<img src="${reader.result}" width="500px"/>`,
+                width: 500,
+                height: 500 / ratio,
+              });
+            };
           };
           reader.readAsDataURL(file);
           break;

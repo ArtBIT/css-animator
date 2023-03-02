@@ -7,9 +7,12 @@ import { mergeRefs } from "../../utils/refs";
 import Moveable from "react-moveable";
 
 const MovableProxy = React.forwardRef(
-  ({ className, proxyRef, onChange, frame, enabled = false }, ref) => {
+  (
+    { className, proxyRef, onChange, frame, enabled = false, onMouseDown },
+    ref
+  ) => {
     const targetRef = useRef();
-    const [showMovable, setShowMovable] = useState(false);
+
     useSyncStyles(targetRef, proxyRef, ["transform"]);
 
     const handleChange = useCallback(
@@ -20,7 +23,11 @@ const MovableProxy = React.forwardRef(
     return (
       <>
         {enabled && (
-          <div ref={mergeRefs(targetRef, ref)} className={className} />
+          <div
+            ref={mergeRefs(targetRef, ref)}
+            className={className}
+            onMouseDown={onMouseDown}
+          />
         )}
         {enabled && (
           <Moveable

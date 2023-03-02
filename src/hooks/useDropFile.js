@@ -1,7 +1,7 @@
 import { useRef, useEffect, useState } from "react";
 export const useDropFile = (onFileDrop) => {
   const ref = useRef();
-  const [active, setActive] = useState(false);
+  const [canDrop, setCanDrop] = useState(false);
 
   useEffect(() => {
     if (!ref.current) return;
@@ -36,14 +36,14 @@ export const useDropFile = (onFileDrop) => {
       if (!eventContainsFiles(e)) return;
       fileInput.style.display = "block";
       fileInput.style.visibility = "visible";
-      setActive(true);
+      setCanDrop(true);
     };
 
     const onDragleave = (e) => {
       e.preventDefault();
       fileInput.style.display = "none";
       fileInput.style.visibility = "hidden";
-      setActive(false);
+      setCanDrop(false);
     };
 
     const onDrop = (e) => {
@@ -52,23 +52,23 @@ export const useDropFile = (onFileDrop) => {
       onFileDrop(file);
       fileInput.style.display = "none";
       fileInput.style.visibility = "hidden";
-      setActive(false);
+      setCanDrop(false);
     };
-    ref.current.addEventListener("dragover", onDragOver);
-    ref.current.addEventListener("dragleave", onDragleave);
+
+    const target = ref.current;
     fileInput.addEventListener("change", onDrop);
+    target.addEventListener("dragover", onDragOver);
+    target.addEventListener("dragleave", onDragleave);
 
     return () => {
       fileInput.removeEventListener("change", onDrop);
-      if (ref.current) {
-        ref.current.removeEventListener("dragover", onDragOver);
-        ref.current.removeEventListener("dragleave", onDragleave);
-        ref.current.removeChild(fileInput);
-      }
+      target.removeEventListener("dragover", onDragOver);
+      target.removeEventListener("dragleave", onDragleave);
+      target.removeChild(fileInput);
     };
   }, [onFileDrop]);
 
-  return { ref, active };
+  return { ref, canDrop };
 };
 
 export default useDropFile;
