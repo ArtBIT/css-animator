@@ -18,7 +18,7 @@ const Stage = ({ className, innerRef, frame, updateFrame, isPlaying }) => {
   return (
     <div className={c(s["root"], className)}>
       <Flex column>
-        <Flex row style={{ zIndex: 3 }}>
+        <Flex row className={s["toolbar"]}>
           <IconButton onClick={() => reset()} aria-label="Reset Viewport">
             <CenterFocusStrongIcon />
           </IconButton>

@@ -34,3 +34,10 @@
   width: var(--target-size);
   height: var(--target-size);
 }
+.toolbar {
+  z-index: 3;
+  pointer-events: none;
+}
+.toolbar > * {
+  pointer-events: all;
+}
