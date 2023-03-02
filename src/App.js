@@ -171,6 +171,9 @@ ${cssKeyframes}
   const onKeyDown = useEvent({ current: window.document }, "keydown");
   const handleKeyboardShortcuts = useCallback(
     (e) => {
+      if (["TEXTAREA", "INPUT"].includes(e.target.nodeName)) {
+        return;
+      }
       let preventDefault = true;
       switch (e.key) {
         case "ArrowLeft":
