@@ -6,14 +6,14 @@
   left: 50%;
 }
 
-.root.hovered {
-  background-color: #5a5;
-}
-
 .target {
   position: absolute;
   top: calc(var(--target-size) / -2);
   left: calc(var(--target-size) / -2);
   width: var(--target-size);
   height: var(--target-size);
+}
+
+.hovered {
+  background-color: #5a5;
 }
