@@ -1,5 +1,5 @@
 import c from "classnames";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Button from "@mui/material/Button";
 import Flex from "../../../Flex";
 import fileToHtml from "../../../../utils/fileToHtml";
@@ -18,5 +18,4 @@ const AnimationTarget = ({ className, name, value }) => {
   );
 };
 
-Unknown template.
 export default AnimationTarget;

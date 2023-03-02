@@ -1,5 +1,5 @@
 import c from "classnames";
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import fileToHtml from "../../utils/fileToHtml";
 import useDropFile from "../../hooks/useDropFile";
 import Dummy from "../../assets/wasp.png";
@@ -15,7 +15,7 @@ const AnimationTarget = React.forwardRef(
 
     const [isMovable, setIsMovable] = useState(false);
     const handleMouseDown = useCallback((e) => {
-      if (e.button != 0) return;
+      if (e.button !== 0) return;
       e.preventDefault();
       e.stopPropagation();
       setIsMovable(true);
@@ -43,7 +43,7 @@ const AnimationTarget = React.forwardRef(
         )}
         {!value && (
           <div ref={ref} className={s["target"]}>
-            <img src={Dummy} alt="Drop image files here..." width="500px" />
+            <img src={Dummy} alt="Drop files here..." width="500px" />
             <div>Drop image or SVG files here...</div>
           </div>
         )}

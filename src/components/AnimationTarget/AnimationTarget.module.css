@@ -14,4 +14,6 @@
   position: absolute;
   top: calc(var(--target-size) / -2);
   left: calc(var(--target-size) / -2);
+  width: var(--target-size);
+  height: var(--target-size);
 }

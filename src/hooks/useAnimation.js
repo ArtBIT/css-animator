@@ -1,9 +1,7 @@
 import React, {
   useState,
   useRef,
-  createRef,
   useCallback,
-  useEffect,
   useLayoutEffect,
   useMemo,
 } from "react";
@@ -36,10 +34,24 @@ export const useAnimation = ({
   const pause = useCallback(() => setIsPlaying(false), []);
   const stop = useCallback(() => {
     pause();
-    setCurrentFrame(0);
+    setCurrentFrameImpl(0);
   }, [pause]);
+  const setCurrentFrameImpl = useCallback(
+    (newCurrentFrame) => {
+      const anim = animation.current;
+      const offset = newCurrentFrame / (totalFrames - 1);
+      const { duration } = anim.effect.getComputedTiming();
+      anim.effect.updateTiming({
+        delay: -1 * offset * duration,
+      });
+      console.log(currentFrame, newCurrentFrame);
+      setCurrentFrame(newCurrentFrame);
+    },
+    [currentFrame, totalFrames]
+  );
 
   const { duration } = animationOptions;
+
   const update = useCallback(() => {
     if (!lastUpdate.current) {
       lastUpdate.current = Date.now();
@@ -50,30 +62,20 @@ export const useAnimation = ({
       const framesToAdd = elapsedMiliseconds / timePerFrame;
       if (framesToAdd > 1) {
         lastUpdate.current = now;
-        setCurrentFrame(Math.floor(currentFrame + framesToAdd) % totalFrames);
+        const newCurrentFrame =
+          Math.floor(currentFrame + framesToAdd) % totalFrames;
+        setCurrentFrameImpl(newCurrentFrame);
       }
     }
     requestRef.current = requestAnimationFrame(update);
   }, [currentFrame, totalFrames, duration]);
 
+  // Animation Loop
   useLayoutEffect(() => {
     if (!isPlaying) return;
     requestRef.current = requestAnimationFrame(update);
     return () => cancelAnimationFrame(requestRef.current);
   }, [isPlaying, update]);
-
-  const setAnimationToCurrentFrame = useCallback(
-    (anim) => {
-      const offset = currentFrame / (totalFrames - 1);
-      const { duration, direction } = anim.effect.getComputedTiming();
-      //const iterations = direction.startsWith("alternate") ? 2 : 1;
-      anim.effect.updateTiming({
-        delay: -1 * offset * duration,
-        //iterations,
-      });
-    },
-    [currentFrame, totalFrames]
-  );
 
   // Reset animation
   useLayoutEffect(() => {
@@ -92,7 +94,7 @@ export const useAnimation = ({
           )
         );
         animation.current.pause();
-        setAnimationToCurrentFrame(animation.current);
+        setCurrentFrameImpl(currentFrame);
         window.anim = animation.current;
       } catch (e) {
         console.error(e);
@@ -105,10 +107,9 @@ export const useAnimation = ({
       }
     };
   }, [
-    ref,
-    animation,
     keyframes,
-    setAnimationToCurrentFrame,
+    setCurrentFrameImpl,
+    currentFrame,
     animationOptions,
     totalFrames,
   ]);
@@ -120,20 +121,14 @@ export const useAnimation = ({
     );
   }, [currentFrame, keyframes]);
 
-  // Update animation
-  useLayoutEffect(() => {
-    if (!animation.current) return;
-    setAnimationToCurrentFrame(animation.current);
-  }, [animation, setAnimationToCurrentFrame, currentKeyframe.data.id]);
-
   return {
     animationOptions,
     ref,
 
     isPlaying,
     currentFrame,
+    setCurrentFrame: setCurrentFrameImpl,
     currentKeyframe,
-    setCurrentFrame,
     setAnimationOptions,
     pause,
     start,

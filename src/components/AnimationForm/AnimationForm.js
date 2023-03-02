@@ -288,7 +288,6 @@ function AnimationForm({ className, onChange }) {
             className={s["flex-grow-and-shrink"]}
             name="steps"
             label="Steps"
-            defaultValue="1"
             value={steps}
             inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
             onChange={handleChange}

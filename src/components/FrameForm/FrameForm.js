@@ -1,11 +1,4 @@
-import React, {
-  useRef,
-  useState,
-  useEffect,
-  useLayoutEffect,
-  useCallback,
-  useMemo,
-} from "react";
+import React, { useRef, useState, useEffect, useCallback } from "react";
 import Button from "@mui/material/Button";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import ContentPasteIcon from "@mui/icons-material/ContentPaste";
@@ -54,12 +47,12 @@ const FrameForm = ({
 
   useEffect(() => {
     setValue(frame.data.toString());
-  }, [frame.data.id]);
+  }, [frame.data]);
 
   useEffect(() => {
     if (!ref.current) return;
     ref.current.setSelectionRange(cursor, cursor);
-  }, [ref, cursor, value]);
+  }, [cursor, value]);
 
   return (
     <div className={c(s["root"], className)}>

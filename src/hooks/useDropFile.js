@@ -66,7 +66,7 @@ export const useDropFile = (onFileDrop) => {
         ref.current.removeChild(fileInput);
       }
     };
-  }, [ref.current, onFileDrop]);
+  }, [onFileDrop]);
 
   return { ref, active };
 };

@@ -1,6 +1,6 @@
-import React, { useState, useMemo, useRef, useCallback } from "react";
+import React, { useState, useMemo, useCallback } from "react";
 import useEvent from "beautiful-react-hooks/useEvent";
-import { SnackbarProvider, useSnackbar } from "notistack";
+import { useSnackbar } from "notistack";
 
 import Logo from "./components/Logo";
 import Stage from "./components/Stage";
@@ -12,7 +12,6 @@ import AnimationTimeline from "./components/AnimationTimeline";
 
 import useAnimation from "./hooks/useAnimation";
 import copyTextToClipboard from "./utils/copy";
-import kebabize from "./utils/kebabize";
 import Frame, { FrameData } from "./lib/Frame";
 
 import s from "./App.module.css";
@@ -33,13 +32,16 @@ function App() {
     }),
   ]);
   const [cssVersion, setCSSVersion] = useState(1);
-  const [totalFrames, setTotalFrames] = useState(101);
+  const totalFrames = 101;
   const animation = useAnimation({ totalFrames, keyframes });
   const [clipboard, setClipboard] = useState();
   const { currentFrame, currentKeyframe } = animation;
   const { setCurrentFrame, setAnimationOptions, animationOptions } = animation;
   const { enqueueSnackbar } = useSnackbar();
-  const showSnackBar = (text, variant) => enqueueSnackbar(text, { variant });
+  const showSnackBar = useCallback(
+    (text, variant) => enqueueSnackbar(text, { variant }),
+    [enqueueSnackbar]
+  );
 
   const shiftCurrentKeyFrame = useCallback(
     (numFrames) => {
@@ -58,7 +60,7 @@ function App() {
       setCurrentFrame(newKeyframe.index);
       setCSSVersion(cssVersion + 1);
     },
-    [currentKeyframe, keyframes, cssVersion]
+    [currentKeyframe, setCurrentFrame, keyframes, cssVersion]
   );
 
   const updateFrame = useCallback(
@@ -76,14 +78,14 @@ function App() {
       setKeyframes(newKeyframes);
       setCSSVersion(cssVersion + 1);
     },
-    [keyframes, currentKeyframe.data.id, cssVersion]
+    [keyframes, currentKeyframe.data.data, cssVersion]
   );
 
   const handleKeyframeChange = useCallback(
     (css) => {
       updateFrame(currentFrame, css, true);
     },
-    [currentFrame, keyframes]
+    [currentFrame, updateFrame]
   );
 
   const handleKeyframeRemoval = useCallback(() => {
@@ -107,7 +109,7 @@ function App() {
 
   const handleFrameDataUpdate = useCallback(
     (data) => updateFrame(currentFrame, data),
-    [currentFrame]
+    [currentFrame, updateFrame]
   );
 
   const animationCSS = useMemo(() => {
@@ -137,7 +139,7 @@ ${indent}animation-name: ${name};
 ${cssKeyframes}
 }
 `;
-  }, [keyframes, cssVersion, animationOptions]);
+  }, [keyframes, animationOptions]);
 
   const handleAnimationExport = useCallback(() => {
     copyTextToClipboard(animationCSS);
@@ -146,11 +148,11 @@ ${cssKeyframes}
 
   const prevFrame = useCallback(
     () => setCurrentFrame((totalFrames + currentFrame - 1) % totalFrames),
-    [currentFrame, totalFrames]
+    [currentFrame, setCurrentFrame, totalFrames]
   );
   const nextFrame = useCallback(
     () => setCurrentFrame((totalFrames + currentFrame + 1) % totalFrames),
-    [currentFrame, totalFrames]
+    [currentFrame, setCurrentFrame, totalFrames]
   );
 
   const handleCopyFrame = useCallback(() => {
@@ -207,7 +209,6 @@ ${cssKeyframes}
           preventDefault = false;
       }
       preventDefault && e.preventDefault();
-      console.log(e);
     },
     [
       prevFrame,
